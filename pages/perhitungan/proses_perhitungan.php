@@ -53,76 +53,76 @@ if (isset($_POST['hitung'])) {
             return $baris;
         }
 
-        // Proses normalisasi
+        // Tambahkan definisi untuk variabel $ambil sebelum digunakan
         $ambil = Data("SELECT * FROM data_penilaian");
 
-        function normalisasi($dataPenilaian)
+        // Proses normalisasi
+        function normalisasi($dataPenilaian, $jenisKriteria)
         {
             global $koneksi;
             $jumlahAlternatif = count($dataPenilaian);
             $jumlahKriteria = count($dataPenilaian[0]) - 2;
-
             $hasil = [];
 
             for ($i = 0; $i < $jumlahKriteria; $i++) {
                 $kolom = array_column($dataPenilaian, $i + 2);
-                $nilaiTerbesar = max($kolom);
-
-                for ($j = 0; $j < $jumlahAlternatif; $j++) {
-                    $hasil[$j][$i] = number_format($dataPenilaian[$j][$i + 2] / $nilaiTerbesar, 3);
+                if ($jenisKriteria[$i] == 'cost') {
+                    $nilaiTerendah = min($kolom);
+                    for ($j = 0; $j < $jumlahAlternatif; $j++) {
+                        $hasil[$j][$i] = $nilaiTerendah / $dataPenilaian[$j][$i + 2];
+                    }
+                } else {
+                    $nilaiTertinggi = max($kolom);
+                    for ($j = 0; $j < $jumlahAlternatif; $j++) {
+                        $hasil[$j][$i] = $dataPenilaian[$j][$i + 2] / $nilaiTertinggi;
+                    }
                 }
             }
 
-            foreach ($hasil as $index => $row) {
+            foreach ($hasil as $row) {
                 $query = "INSERT INTO hasil_normalisasi (C1, C2, C3, C4, C5) VALUES ('" . implode("', '", $row) . "')";
                 mysqli_query($koneksi, $query);
             }
-
             return mysqli_affected_rows($koneksi);
         }
-
-        normalisasi($ambil);
 
         // Proses preferensi
         $bobot = Data("SELECT * FROM data_kriteria");
 
-        // Data / nilai bobot
-        $bobotC1 = $bobot[0][1];
-        $bobotC2 = $bobot[0][2];
-        $bobotC3 = $bobot[0][3];
-        $bobotC4 = $bobot[0][4];
-        $bobotC5 = $bobot[0][5];
+        // Bobot persentase
+        $totalBobot = $bobot[0][1] + $bobot[0][2] + $bobot[0][3] + $bobot[0][4] + $bobot[0][5];
+        $bobotC1 = $bobot[0][1] / $totalBobot;
+        $bobotC2 = $bobot[0][2] / $totalBobot;
+        $bobotC3 = $bobot[0][3] / $totalBobot;
+        $bobotC4 = $bobot[0][4] / $totalBobot;
+        $bobotC5 = $bobot[0][5] / $totalBobot;
+
+        // Jenis kriteria (sesuaikan urutan dengan tabel)
+        $jenisKriteria = ['benefit', 'benefit', 'cost', 'benefit', 'benefit'];
+
+        // Proses normalisasi
+        normalisasi($ambil, $jenisKriteria);
+
+        $hasilNorm = Data("SELECT * FROM hasil_normalisasi");
 
         function preferensi($hasilNorm, $bobotC1, $bobotC2, $bobotC3, $bobotC4, $bobotC5)
         {
             global $koneksi;
             $alternatif = tampilData("SELECT * FROM data_alternatif");
             foreach ($hasilNorm as $index => $row) {
-                // Validasi data alternatif
                 if (!isset($alternatif[$index])) continue;
-
                 $ID_Alternatif = $alternatif[$index]['ID_Alternatif'];
-                $Nama_Mahasiswa = $alternatif[$index]['Nama_Mahasiswa'];
-
-                // Validasi jumlah elemen pada $row
-                $pre1 = isset($row[1]) ? number_format($bobotC1 * $row[1], 3) : 0;
-                $pre2 = isset($row[2]) ? number_format($bobotC2 * $row[2], 3) : 0;
-                $pre3 = isset($row[3]) ? number_format($bobotC3 * $row[3], 3) : 0;
-                $pre4 = isset($row[4]) ? number_format($bobotC4 * $row[4], 3) : 0;
-                $pre5 = isset($row[5]) ? number_format($bobotC5 * $row[5], 3) : 0;
-
-                $hasilTotal = number_format($pre1 + $pre2 + $pre3 + $pre4 + $pre5, 3);
-
-                // Pastikan ID_Alternatif valid dan ada di tabel data_alternatif
-                if ($ID_Alternatif != null && $ID_Alternatif != '') {
-                    $query = "INSERT INTO hasil_preferensi (C1, C2, C3, C4, C5, Total, ID_Alternatif) VALUES ('$pre1', '$pre2', '$pre3', '$pre4', '$pre5', '$hasilTotal', '$ID_Alternatif')";
-                    mysqli_query($koneksi, $query);
-                }
+                $pre1 = $bobotC1 * $row[1];
+                $pre2 = $bobotC2 * $row[2];
+                $pre3 = $bobotC3 * $row[3];
+                $pre4 = $bobotC4 * $row[4];
+                $pre5 = $bobotC5 * $row[5];
+                $hasilTotal = $pre1 + $pre2 + $pre3 + $pre4 + $pre5;
+                $query = "INSERT INTO hasil_preferensi (C1, C2, C3, C4, C5, Total, ID_Alternatif) VALUES ('$pre1', '$pre2', '$pre3', '$pre4', '$pre5', '$hasilTotal', '$ID_Alternatif')";
+                mysqli_query($koneksi, $query);
             }
             return mysqli_affected_rows($koneksi);
         }
-
-        $hasilNorm = Data("SELECT * FROM hasil_normalisasi");
 
         preferensi($hasilNorm, $bobotC1, $bobotC2, $bobotC3, $bobotC4, $bobotC5);
 
