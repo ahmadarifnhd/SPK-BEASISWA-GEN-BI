@@ -20,7 +20,7 @@ if (isset($_POST['edit'])) {
                 AO      = '$nilai_c1',
                 IPK  = '$nilai_c2',
                 KKM       = '$nilai_c3',
-                KKM   = '$nilai_c4',
+                TMB   = '$nilai_c4',
                 SMT   = '$nilai_c5'
               WHERE ID_Penilaian = '$idPenilai'";
 
@@ -80,7 +80,8 @@ if (isset($_POST['edit'])) {
               <label>ID Penilaian</label>
             </div>
             <div class="col-md-6">
-              <input class="form-control select2" style="width: 100%;" placeholder="Nilai" name="nilai_c1" required value="<?= $hasil['ID_Penilaian']; ?>" disabled></input>
+              <input class="form-control select2" style="width: 100%;" placeholder="Nilai" name="nilai_c1" required
+                value="<?= $hasil['ID_Penilaian']; ?>" disabled></input>
             </div>
           </div>
           <div class="row mb-3">
@@ -88,8 +89,7 @@ if (isset($_POST['edit'])) {
               <label>Alternatif</label>
             </div>
             <div class="col-md-6">
-              <input type="text" class="form-control"
-                value="<?= htmlspecialchars($hasil['Alternatif']); ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($hasil['Alternatif']); ?>" readonly>
               <!-- hidden supaya tetap terkirim ke POST -->
               <input type="hidden" name="alternatif" value="<?= htmlspecialchars($hasil['Alternatif']); ?>">
             </div>

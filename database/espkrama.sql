@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 02 Sep 2025 pada 14.13
--- Versi server: 10.4.27-MariaDB
--- Versi PHP: 8.1.12
+-- Waktu pembuatan: 25 Sep 2025 pada 02.16
+-- Versi server: 10.4.32-MariaDB
+-- Versi PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -38,11 +38,11 @@ CREATE TABLE `data_alternatif` (
 --
 
 INSERT INTO `data_alternatif` (`ID_Alternatif`, `Nama_Mahasiswa`, `Jenis_Beasiswa`) VALUES
-(1, 'doni prakosa', 'Beasiswa Genbi'),
-(2, 'dion pratama', 'Beasiswa Genbi'),
-(3, 'dina ayu palupi', 'Beasiswa Genbi'),
-(4, 'dini ambarwati', 'Beasiswa Genbi'),
-(5, 'danu nugraha', 'Beasiswa Genbi');
+(1, 'Fauzi', 'Beasiswa Genbi'),
+(2, 'Rama', 'Beasiswa Merdeka'),
+(3, 'Riska', 'Beasiswa Genbi'),
+(4, 'Doni', 'Beasiswa Genbi'),
+(5, 'Hari', 'Beasiswa Genbi');
 
 -- --------------------------------------------------------
 
@@ -58,6 +58,13 @@ CREATE TABLE `data_kriteria` (
   `TMB` int(20) NOT NULL,
   `SMT` int(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `data_kriteria`
+--
+
+INSERT INTO `data_kriteria` (`ID_Kriteria`, `AO`, `IPK`, `KKM`, `TMB`, `SMT`) VALUES
+(0, 1, 2, 3, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -80,7 +87,11 @@ CREATE TABLE `data_penilaian` (
 --
 
 INSERT INTO `data_penilaian` (`ID_Penilaian`, `Alternatif`, `AO`, `IPK`, `KKM`, `TMB`, `SMT`) VALUES
-(1, 'dini ambarwati', 9, 8, 6, 7, 7);
+(1, 'Fauzi', 1, 1, 1, 1, 1),
+(2, 'Rama', 3, 3, 3, 3, 3),
+(3, 'Riska', 2, 2, 2, 2, 2),
+(4, 'Doni', 1, 2, 1, 2, 1),
+(5, 'Hari', 2, 1, 2, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -119,19 +130,20 @@ CREATE TABLE `hasil_normalisasi` (
   `C2` float NOT NULL,
   `C3` float NOT NULL,
   `C4` float NOT NULL,
-  `C5` float NOT NULL
+  `C5` float NOT NULL,
+  `ID_Alternatif` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `hasil_normalisasi`
 --
 
-INSERT INTO `hasil_normalisasi` (`ID_Norm`, `C1`, `C2`, `C3`, `C4`, `C5`) VALUES
-(1, 0.778, 0.667, 0.889, 0.556, 1),
-(2, 0.889, 0.778, 0.778, 0.667, 0.889),
-(3, 0.667, 1, 1, 0.889, 0.667),
-(4, 1, 0.889, 0.667, 0.778, 0.778),
-(5, 0.556, 0.556, 0.778, 1, 0.889);
+INSERT INTO `hasil_normalisasi` (`ID_Norm`, `C1`, `C2`, `C3`, `C4`, `C5`, `ID_Alternatif`) VALUES
+(0, 0.333, 0.333, 0.333, 0.333, 0.333, NULL),
+(0, 1, 1, 1, 1, 1, NULL),
+(0, 0.667, 0.667, 0.667, 0.667, 0.667, NULL),
+(0, 0.333, 0.667, 0.333, 0.667, 0.333, NULL),
+(0, 0.667, 0.333, 0.667, 0.333, 0.667, NULL);
 
 -- --------------------------------------------------------
 
@@ -146,19 +158,20 @@ CREATE TABLE `hasil_preferensi` (
   `C3` float NOT NULL,
   `C4` float NOT NULL,
   `C5` float NOT NULL,
-  `Total` float NOT NULL
+  `Total` float NOT NULL,
+  `ID_Alternatif` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `hasil_preferensi`
 --
 
-INSERT INTO `hasil_preferensi` (`ID_Pref`, `C1`, `C2`, `C3`, `C4`, `C5`, `Total`) VALUES
-(1, 7.002, 4.669, 5.334, 1.668, 5, 23.673),
-(2, 8.001, 5.446, 4.668, 2.001, 4.445, 24.561),
-(3, 6.003, 7, 6, 2.667, 3.335, 25.005),
-(4, 9, 6.223, 4.002, 2.334, 3.89, 25.449),
-(5, 5.004, 3.892, 4.668, 3, 4.445, 21.009);
+INSERT INTO `hasil_preferensi` (`ID_Pref`, `C1`, `C2`, `C3`, `C4`, `C5`, `Total`, `ID_Alternatif`) VALUES
+(0, 0.333, 0.666, 0.999, 0.666, 0.666, 3.33, 1),
+(0, 1, 2, 3, 2, 2, 10, 2),
+(0, 0.667, 1.334, 2.001, 1.334, 1.334, 6.67, 3),
+(0, 0.333, 1.334, 0.999, 1.334, 0.666, 4.666, 4),
+(0, 0.667, 0.666, 2.001, 0.666, 1.334, 5.334, 5);
 
 -- --------------------------------------------------------
 
