@@ -15,13 +15,13 @@ if (isset($_POST['edit'])) {
   $nilai_c4 = isset($_POST['bobot_c4']) ? intval($_POST['bobot_c4']) : 0;
   $nilai_c5 = isset($_POST['bobot_c5']) ? intval($_POST['bobot_c5']) : 0;
 
-  $query = "UPDATE data_penilaian SET 
+    $query = "UPDATE data_penilaian SET 
                 Alternatif = '$alternatif',
                 AO      = '$nilai_c1',
-                IPK  = '$nilai_c2',
-                KKM       = '$nilai_c3',
-                KKM   = '$nilai_c4',
-                SMT   = '$nilai_c5'
+                IPK     = '$nilai_c2',
+                KKM     = '$nilai_c3',
+                TMB     = '$nilai_c4',
+                SMT     = '$nilai_c5'
               WHERE ID_Penilaian = '$idPenilai'";
 
   if (mysqli_query($koneksi, $query)) {
